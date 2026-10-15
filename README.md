@@ -264,7 +264,6 @@ SmartService/
 │  └─ data.sql        # 订单、物流和知识样本
 ├─ src/test/          # 单元测试、评测测试和端到端集成测试
 ├─ deploy/            # Prometheus 配置
-├─ docs/              # 使用、实现、评测、简历和面试文档
 ├─ docker-compose.yml # MySQL、Prometheus、Grafana
 └─ pom.xml
 ```
