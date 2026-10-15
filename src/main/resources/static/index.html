@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartService · 智能售后协同平台</title>
+  <link rel="stylesheet" href="/app.css">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div><strong>SmartService</strong><span>AI Service OS</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-page="dashboard"><span>◫</span>工作台</button>
+        <button class="nav-item" data-page="agent"><span>◎</span>Agent 会话</button>
+        <button class="nav-item" data-page="aftersale"><span>▤</span>售后工单</button>
+        <button class="nav-item" data-page="knowledge"><span>⌘</span>知识中心</button>
+        <button class="nav-item" data-page="observability"><span>◌</span>调用观测</button>
+      </nav>
+      <div class="side-card">
+        <span class="online-dot"></span>
+        <div><strong>系统运行正常</strong><small>本地演示环境</small></div>
+      </div>
+      <div class="profile">
+        <div class="avatar">林</div>
+        <div><strong id="displayName">演示用户</strong><span>普通用户</span></div>
+        <button id="logoutButton" title="退出">↗</button>
+      </div>
+    </aside>
+
+    <main>
+      <header>
+        <div><p class="eyebrow" id="pageEyebrow">MONDAY · OCT 12</p><h1 id="pageTitle">智能服务工作台</h1></div>
+        <div class="header-actions"><button class="ghost" id="usageButton">使用说明</button><button class="primary" id="newChatButton">＋ 新建会话</button></div>
+      </header>
+
+      <section class="page active" id="page-dashboard">
+      <section class="hero">
+        <div>
+          <span class="pill"><i></i> Agent Runtime 已就绪</span>
+          <h2>你好，<span id="heroName">林同学</span><br>今天需要处理什么？</h2>
+          <p>连接订单、物流与售后知识，敏感操作经过二次确认后执行。</p>
+          <div class="quick-actions">
+            <button data-prompt="帮我查一下耳机到哪了"><b>⌖</b><span>查询物流<small>追踪最近订单</small></span></button>
+            <button data-prompt="这个耳机坏了，我想退货"><b>↩</b><span>申请退货<small>安全确认后执行</small></span></button>
+            <button data-prompt="耳机坏了在保修范围内吗"><b>⌕</b><span>售后政策<small>混合检索知识库</small></span></button>
+          </div>
+        </div>
+        <div class="hero-orbit" aria-hidden="true"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="core">AI</div></div>
+      </section>
+
+      <section class="stats" id="stats">
+        <article><span>会话请求</span><strong id="requestCount">0</strong><small>当前用户累计</small></article>
+        <article><span>工具调用</span><strong id="toolCount">0</strong><small>订单 / RAG / 售后</small></article>
+        <article><span>确认拦截</span><strong id="guardCount">0</strong><small>高风险操作</small></article>
+        <article><span>平均耗时</span><strong><em id="latencyValue">0</em><i> ms</i></strong><small>本地编排链路</small></article>
+      </section>
+
+      <div class="content-grid">
+        <section class="panel orders-panel">
+          <div class="panel-head"><div><span class="section-label">ORDER CENTER</span><h3>最近订单</h3></div><button class="text-button" id="showOrdersButton">查看全部 →</button></div>
+          <div id="orderList" class="order-list"><div class="skeleton"></div><div class="skeleton"></div></div>
+        </section>
+
+        <section class="panel trace-panel">
+          <div class="panel-head"><div><span class="section-label">AGENT TRACE</span><h3>实时调用链</h3></div><span class="live"><i></i> LIVE</span></div>
+          <div id="traceEmpty" class="trace-empty"><div class="trace-icon">⌁</div><strong>等待首次会话</strong><p>工具调用与安全决策会显示在这里</p></div>
+          <div id="traceList" class="trace-list hidden"></div>
+        </section>
+      </div>
+      </section>
+
+      <section class="page" id="page-agent">
+        <div class="agent-page-grid">
+          <section class="panel agent-workspace">
+            <div class="panel-head agent-page-head">
+              <div><span class="section-label">AGENT RUNTIME</span><h3>业务协同会话</h3><p>直接用自然语言查询订单、物流或发起售后。</p></div>
+              <span class="runtime-badge" id="runtimeModeBadge"><i></i> 正在检测运行模式</span>
+            </div>
+            <div class="messages agent-page-messages" id="agentPageMessages">
+              <div class="message agent"><div class="mini-avatar">S</div><div class="bubble">你好，我已连接订单、物流、售后知识和退货申请工具。需要我做什么？</div></div>
+            </div>
+            <div class="agent-starters">
+              <button data-agent-prompt="帮我查一下键盘的物流">查询键盘物流</button>
+              <button data-agent-prompt="这个耳机坏了，我想退货">发起耳机退货</button>
+              <button data-agent-prompt="退款一般多久到账">咨询退款时效</button>
+            </div>
+            <form id="agentPageForm" class="composer agent-page-composer">
+              <textarea id="agentPageInput" rows="2" maxlength="500" placeholder="输入业务问题，Enter 发送…"></textarea>
+              <button type="submit" id="agentPageSendButton">发送</button>
+            </form>
+          </section>
+          <aside class="agent-side">
+            <section class="panel">
+              <span class="section-label">AVAILABLE TOOLS</span><h3>业务工具</h3>
+              <div class="tool-list">
+                <div><b>01</b><span><strong>query_order</strong><small>按用户与商品查询订单</small></span><em>只读</em></div>
+                <div><b>02</b><span><strong>query_logistics</strong><small>获取最新物流轨迹</small></span><em>只读</em></div>
+                <div><b>03</b><span><strong>search_policy</strong><small>混合检索售后知识</small></span><em>只读</em></div>
+                <div><b>04</b><span><strong>create_refund</strong><small>创建退货退款申请</small></span><em class="risk">需确认</em></div>
+                <div><b>05</b><span><strong>prepare_refund</strong><small>模型准备售后二次确认</small></span><em>只读</em></div>
+              </div>
+            </section>
+            <section class="panel safety-card"><span>安全策略</span><strong>写操作默认阻断</strong><p>只有通过用户、意图、订单和有效期校验，Agent 才能调用高风险工具。</p></section>
+          </aside>
+        </div>
+      </section>
+
+      <section class="page" id="page-aftersale">
+        <section class="page-banner aftersale-banner">
+          <div><span class="section-label">AFTER-SALE CENTER</span><h2>售后工单</h2><p>查看 Agent 创建的退货申请与处理状态。</p></div>
+          <button class="primary" data-agent-prompt="这个耳机坏了，我想退货" data-open-agent="true">＋ 发起售后</button>
+        </section>
+        <section class="stats compact-stats">
+          <article><span>工单总数</span><strong id="afterSaleTotal">0</strong><small>当前用户</small></article>
+          <article><span>待审核</span><strong id="afterSalePending">0</strong><small>等待平台处理</small></article>
+          <article><span>已完成</span><strong id="afterSaleCompleted">0</strong><small>退款 / 换货完成</small></article>
+          <article><span>重复写入</span><strong>0</strong><small>唯一索引 + 幂等键</small></article>
+        </section>
+        <section class="panel table-panel">
+          <div class="panel-head"><div><span class="section-label">REQUESTS</span><h3>工单列表</h3></div><button class="text-button" id="refreshAfterSales">刷新数据 ↻</button></div>
+          <div class="data-table" id="afterSaleTable"><div class="skeleton"></div><div class="skeleton"></div></div>
+        </section>
+      </section>
+
+      <section class="page" id="page-knowledge">
+        <section class="page-banner knowledge-banner">
+          <div><span class="section-label">KNOWLEDGE RETRIEVAL</span><h2>知识中心</h2><p>浏览知识文档，并查看 BM25、向量与 RRF 的检索得分。</p></div>
+          <form id="knowledgeSearchForm" class="knowledge-search"><input id="knowledgeQuery" maxlength="100" placeholder="例如：耳机一边没声音能保修吗"><button type="submit">混合检索</button></form>
+        </section>
+        <div id="knowledgeResultsSection" class="panel knowledge-results hidden">
+          <div class="panel-head"><div><span class="section-label">RETRIEVAL RESULT</span><h3>检索结果</h3></div><button class="text-button" id="clearKnowledgeSearch">清除结果</button></div>
+          <div id="knowledgeResults" class="result-list"></div>
+        </div>
+        <section class="panel knowledge-library">
+          <div class="panel-head"><div><span class="section-label">DOCUMENT LIBRARY</span><h3>已入库文档</h3></div><div class="category-filters" id="categoryFilters"><button class="active" data-category="ALL">全部</button><button data-category="AFTER_SALE">售后</button><button data-category="LOGISTICS">物流</button><button data-category="ORDER">订单</button><button data-category="PRODUCT">商品</button><button data-category="PROMOTION">优惠</button></div></div>
+          <div id="knowledgeDocuments" class="document-grid"><div class="skeleton"></div><div class="skeleton"></div></div>
+        </section>
+      </section>
+
+      <section class="page" id="page-observability">
+        <section class="page-banner observability-banner">
+          <div><span class="section-label">AGENT OBSERVABILITY</span><h2>调用观测</h2><p>跟踪意图、工具、检索与端到端延迟。</p></div>
+          <button class="ghost" id="refreshObservability">刷新指标 ↻</button>
+        </section>
+        <section class="stats compact-stats">
+          <article><span>请求总量</span><strong id="obsRequests">0</strong><small>最近 500 条内</small></article>
+          <article><span>工具调用</span><strong id="obsTools">0</strong><small>业务系统交互</small></article>
+          <article><span>P95 延迟</span><strong><em id="obsP95">0</em><i> ms</i></strong><small>本地编排链路</small></article>
+          <article><span>安全拦截</span><strong id="obsGuards">0</strong><small>等待用户确认</small></article>
+        </section>
+        <div class="observability-grid">
+          <section class="panel table-panel">
+            <div class="panel-head"><div><span class="section-label">TRACE LOG</span><h3>最近调用</h3></div><span class="live"><i></i> LIVE</span></div>
+            <div id="observabilityTable" class="data-table"></div>
+          </section>
+          <aside class="panel metric-guide">
+            <span class="section-label">METRIC GUIDE</span><h3>指标说明</h3>
+            <div><b>TTFT</b><p>首个 SSE 事件返回耗时</p></div><div><b>Tool Calls</b><p>单次任务调用的业务工具数量</p></div><div><b>Retrieval Docs</b><p>送入回答上下文的知识文档数</p></div><div><b>Guard</b><p>高风险工具进入确认阶段的次数</p></div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="chat-drawer" id="chatDrawer" aria-hidden="true">
+    <div class="drawer-head">
+      <div><span class="agent-avatar">S</span><div><strong>SmartService Agent</strong><small><i></i> 在线 · 安全工具模式</small></div></div>
+      <button id="closeChatButton">×</button>
+    </div>
+    <div class="messages" id="messages">
+      <div class="message agent"><div class="mini-avatar">S</div><div class="bubble">你好，我可以查询订单和物流、解释售后政策，也能在你确认后创建售后单。</div></div>
+    </div>
+    <div class="suggestions">
+      <button data-prompt="昨天买的耳机到哪了">耳机到哪了？</button>
+      <button data-prompt="退款一般多久到账">退款多久到账？</button>
+    </div>
+    <form id="chatForm" class="composer">
+      <textarea id="messageInput" rows="1" maxlength="500" placeholder="描述你的问题…"></textarea>
+      <button type="submit" id="sendButton">发送</button>
+    </form>
+    <div class="drawer-foot">AI 可能出错，敏感操作将要求二次确认</div>
+  </div>
+  <div class="overlay" id="overlay"></div>
+  <div class="modal" id="usageModal" aria-hidden="true">
+    <div class="modal-head"><div><span class="section-label">QUICK START</span><h3>使用说明</h3></div><button id="closeUsageButton">×</button></div>
+    <ol><li><b>查询业务</b><span>在 Agent 会话中输入“帮我查一下耳机到哪了”。</span></li><li><b>发起售后</b><span>描述商品问题，系统会先检索政策并要求二次确认。</span></li><li><b>查看结果</b><span>售后工单会显示真实写入结果，调用观测会记录整条执行链。</span></li></ol>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>

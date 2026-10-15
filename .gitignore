@@ -1,0 +1,10 @@
+target/
+.m2-cache/
+.idea/
+.vscode/
+*.iml
+*.log
+.env
+data/
+!.env.example
+docs
